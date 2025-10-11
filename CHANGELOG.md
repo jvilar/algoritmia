@@ -1,4 +1,10 @@
 # Changelog
+## [4.0.2] - 2025-10-11
+  - `algoritmia/_examples/divide_and_conquer/mergesort_scheme.py`: Cambios menores.
+  - `algoritmia/_examples/backtracking`: Añade el tipo Result a los ejemplos.
+  - `algoritmia/schemes/bt_scheme.py`: Corrige el tipo ScoredSolution.
+  - `algoritmia/viewers/graph2d_viewer.py`: Cambia el path de anchura 2 a 3.
+  - `algoritmia/schemes/bt_scheme.py`: Cambio cosmetico en min_solution y max_solution.
 ## [4.0.1] - 2025-10-03
   - `algoritmia/viewers/graph2d_viewer.py`:Añade `add_path(path, color_name)`.
   - `algoritmia/examples`: renombrado `algoritmia/_examples` para evitar su espacio de nombres en PyCharm.

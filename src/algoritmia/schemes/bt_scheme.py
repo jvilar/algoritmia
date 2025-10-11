@@ -1,12 +1,13 @@
 """
-Version:  5.3 (09-ene-2024)
+Version:  5.4 (11-oct-2025)
+          5.3 (09-ene-2024)
           5.2 (01-dic-2023)
           5.0 (31-oct-2023)
           4.1 (29-sep-2022)
           4.0 (23-oct-2021)
 
 @author: David Llorens (dllorens@uji.es)
-         (c) Universitat Jaume I 2024
+         (c) Universitat Jaume I 2025
 @license: GPL3
 """
 from abc import ABC, abstractmethod
@@ -21,8 +22,12 @@ from typing import Any, final, Self
 # la memoria correspondiente a ese prefijo.
 type DecisionPath[TDecision] = tuple[TDecision, DecisionPath[TDecision]] | tuple[()]
 
+# TIPOS VÁLIDOS PARA TDecision
+# Puede ser cualquier tipo inmutable
+
 # ACERCA DEL TIPO State
-# La implementación por defecto devuelve self._decisions.
+# Puede ser cualquier tipo inmutable
+# La implementación por defecto devuelve self._decisions (tupla recursiva de TDecision)
 # Podemos sobreescribir state() en la clase hija para devolver otra cosa.
 type State = Any
 
@@ -103,19 +108,21 @@ def bt_vc_solutions[TDecision, TExtra](initial_ds: DecisionSequence[TDecision, T
                 seen.add(new_state)
                 yield from bt(new_ds)
 
-    seen = {initial_ds.state()}  # marcamos initial_ds como visto
-    return bt(initial_ds)  # Devuelve un iterador de soluciones
+    seen = {initial_ds.state()}  # Marca initial_ds como visto
+    return bt(initial_ds)        # Devuelve un iterador de soluciones
 
 
 #  Mejor solución --------------------------------------------------------
 
-type Result[TScore, TSolution] = tuple[TScore, TSolution] | None  # None si no hay solución
+type ScoredSolution[TScore, TSolution] = tuple[TScore, TSolution]          # (score, solution)
+type Result[TScore, TSolution] = ScoredSolution[TScore, TSolution] | None  # Si no hay solución: None
 
-def min_solution[TSolution, TScore](solutions: Iterator[TSolution],
+
+def min_solution[TScore, TSolution](solutions: Iterator[TSolution],
                                     f: Callable[[TSolution], TScore]) -> Result[TScore, TSolution]:
     return min(((f(sol), sol) for sol in solutions), default=None)
 
 
-def max_solution[TSolution, TScore](solutions: Iterator[TSolution],
+def max_solution[TScore, TSolution](solutions: Iterator[TSolution],
                                     f: Callable[[TSolution], TScore]) -> Result[TScore, TSolution]:
     return max(((f(sol), sol) for sol in solutions), default=None)

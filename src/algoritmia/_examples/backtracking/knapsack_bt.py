@@ -45,11 +45,12 @@ def knapsack_solutions(weights: list[int],
 
 
 type ScoredSolution = tuple[int, Solution]
+type Result = ScoredSolution | None
 
 
 def knapsack_best_solution(weights: list[int],
                            values: list[int],
-                           capacity: int) -> ScoredSolution | None:
+                           capacity: int) -> Result:
     def f(solution: Solution) -> int:
         return sum(d * values[i] for i, d in enumerate(solution))
 

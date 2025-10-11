@@ -64,10 +64,13 @@ def coin_change_solutions(v: tuple[int, ...], Q: int) -> Iterator[Solution]:
         yield solution_ds.decisions()
 
 
-ScoredSolution = tuple[Score, Solution]
+# --------------------------------------------------------------------------------
 
 
-def coin_change_best_solution(v: tuple[int, ...], Q: int) -> ScoredSolution | None:
+type ScoredSolution = tuple[Score, Solution]   # (score, decisions)
+type Result = ScoredSolution | None            # None si no hay solución
+
+def coin_change_best_solution(v: tuple[int, ...], Q: int) -> Result:
     def f(solution: Solution) -> int:
         return sum(solution)
 
@@ -127,7 +130,8 @@ if __name__ == "__main__":
         print("\tThere are no solutions")
 
     print('Basic versión (best solution from all solutions):')
-    print(f"\tBest solution: {coin_change_best_solution(v0, Q0)}")
+    best_sol0 = coin_change_best_solution(v0, Q0)
+    print(f"\tBest solution: {best_sol0}")
 
     # Visited control version
     print("Visited control version:")

@@ -40,16 +40,17 @@ def subsetsum_solutions(e: tuple[int, ...], s: int) -> Iterator[Solution]:
     for solution_ds in bt_solutions(initial_ds):
         yield solution_ds.decisions()  # Extraemos las decisiones del objeto solution_ds y las devolvemos
 
+# --------------------------------------------------------------------------------
 
 type ScoredSolution = tuple[int, Solution]
+type Result = ScoredSolution | None
 
-
-def subsetsum_best_solution(e: tuple[int, ...], s: int) -> Optional[ScoredSolution]:
+def subsetsum_best_solution(e: tuple[int, ...], s: int) -> Result:
     def f(solution: Solution) -> int:
         return sum(solution)
 
-    return min_solution(subsetsum_solutions(e, s), f)
-
+    all_solutions = subsetsum_solutions(e, s)
+    return min_solution(all_solutions, f)
 
 # --------------------------------------------------------------------------------
 

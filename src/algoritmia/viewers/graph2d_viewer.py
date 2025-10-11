@@ -1,4 +1,5 @@
 """
+11/10/2025: Version 1.7. Cambia el path de anchura 2 a 3.
 01/10/2025: Version 1.6. Añade add_path(path, color).
 05/10/2021: Version 1.5. Tamaño nodos y margen.
 28/09/2021: Version 1.4. Actualizado a easypaint 2.x.
@@ -137,7 +138,7 @@ class Graph2dViewer(EasyPaint):
             if self.path_info is not None:
                 e_set, color2 = self.path_info
                 if (u, v) in e_set or (v, u) in e_set:
-                    width = 2
+                    width = 3
                     color = color2
 
             self.create_line((u[0] + 0.5) * cell_size + m[0], (u[1] + 0.5) * cell_size + m[1],
@@ -147,7 +148,7 @@ class Graph2dViewer(EasyPaint):
             if self.path_info is not None:
                 e_set, color2 = self.path_info
                 if (u, v) in e_set:
-                    width = 2
+                    width = 3
                     color = color2
             p1, p2 = find_intersec_point(v[0], v[1], (self.node_size + width) / self.cell_size,
                                          u[0], u[1], v[0], v[1])

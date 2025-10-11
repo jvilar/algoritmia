@@ -25,25 +25,27 @@ def hamiltoniancycle_solutions[TVertex](g: IGraph[TVertex]) -> Iterator[Solution
             return len(self) == len(g.V) and v_initial in g.succs(self.last_decision())
 
         def successors(self) -> Iterator[Self]:
-            if len(self) < len(g.V):
+            if len(self) == 0:                # Por eficiencia, fijamos el primer vértice
+                yield self.add_decision(v_initial)
+            elif len(self) < len(g.V):
                 ds_set = set(self.decisions())  # O(|V|)
                 for v in g.succs(self.last_decision()):
                     if v not in ds_set:  # O(1), |V| veces
                         yield self.add_decision(v)
 
-    initial_ds0 = HamiltonianCycleDS()
-    v_initial = next(iter(g.V))  # Por eficiencia, fijamos el primer vértice
-    initial_ds = initial_ds0.add_decision(v_initial)
+    initial_ds = HamiltonianCycleDS()
+    v_initial = next(iter(g.V))   # Cogemos uno cualquiera del set como vértice inicial
     for solution_ds in bt_solutions(initial_ds):
         yield solution_ds.decisions()
 
 
 type Score = int | float    # La longitud (suma de pesos) del ciclo
-type ScoredSolution[TDecision] = tuple[Score, Solution[TDecision]]
+type ScoredSolution[TDecision] = tuple[Score, Solution[TDecision]]   # (score, solution)
+type Result[TDecision] = ScoredSolution[TDecision] | None            # None si no hay solución
 
 
 def hamiltoniancycle_best_solution[TVertex](g: IGraph[TVertex],
-                                            wf: WeightingFunction[TVertex]) -> ScoredSolution[TVertex] | None:
+                                            wf: WeightingFunction[TVertex]) -> Result[TVertex]:
     def f(sol: Solution) -> Score:
         return sum(wf(sol[i - 1], sol[i]) for i in range(len(sol)))
 

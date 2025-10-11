@@ -1,5 +1,4 @@
 """
-
 Version: 6.0 (23-oct-2024) - Añade tipo genérico TSolution y cambia Iterator por Iterable
          5.2 (01-dic-2023)
          4.0 (23-oct-2021)

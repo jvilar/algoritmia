@@ -17,21 +17,21 @@ class MergesortProblem(IDivideAndConquerProblem[Solution]):
 
     def divide(self) -> Iterable[Self]:
         mid = len(self.v) // 2
-        yield MergesortProblem(self.v[:mid])  # O(n)
-        yield MergesortProblem(self.v[mid:])  # O(n)
+        yield MergesortProblem(self.v[:mid])  # left_problem
+        yield MergesortProblem(self.v[mid:])  # right_problem
 
     def combine(self, sols: Iterable[Solution]) -> Solution:
-        left, right = sols
-        c = [0] * (len(left) + len(right))  # Vector auxiliar
+        left_sol, right_sol = sols
+        c = [0] * (len(left_sol) + len(right_sol))  # Vector auxiliar
         i, j, k = 0, 0, 0
-        while i < len(left) and j < len(right):
-            if left[i] < right[j]:
-                c[k] = left[i]; i += 1
+        while i < len(left_sol) and j < len(right_sol):
+            if left_sol[i] < right_sol[j]:
+                c[k] = left_sol[i]; i += 1
             else:
-                c[k] = right[j]; j += 1
+                c[k] = right_sol[j]; j += 1
             k += 1
-        while i < len(left):  c[k] = left[i];  i += 1; k += 1
-        while j < len(right): c[k] = right[j]; j += 1; k += 1
+        while i < len(left_sol):  c[k] = left_sol[i];  i += 1; k += 1
+        while j < len(right_sol): c[k] = right_sol[j]; j += 1; k += 1
         return c
 
 
