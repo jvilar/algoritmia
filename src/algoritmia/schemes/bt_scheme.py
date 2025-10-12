@@ -1,5 +1,6 @@
 """
-Version:  5.4 (11-oct-2025)
+Version:  5.4 (12-oct-2025) - Corregido bug en min_solution y max_solution
+          5.4 (11-oct-2025)
           5.3 (09-ene-2024)
           5.2 (01-dic-2023)
           5.0 (31-oct-2023)
@@ -120,9 +121,19 @@ type Result[TScore, TSolution] = ScoredSolution[TScore, TSolution] | None  # Si 
 
 def min_solution[TScore, TSolution](solutions: Iterator[TSolution],
                                     f: Callable[[TSolution], TScore]) -> Result[TScore, TSolution]:
-    return min(((f(sol), sol) for sol in solutions), default=None)
+    best: Result[TScore, TSolution] = None
+    for sol in solutions:
+        score = f(sol)
+        if best is None or score < best[0]:
+            best = score, sol
+    return best
 
 
 def max_solution[TScore, TSolution](solutions: Iterator[TSolution],
                                     f: Callable[[TSolution], TScore]) -> Result[TScore, TSolution]:
-    return max(((f(sol), sol) for sol in solutions), default=None)
+    best: Result[TScore, TSolution] = None
+    for sol in solutions:
+        score = f(sol)
+        if best is None or score > best[0]:
+            best = score, sol
+    return best

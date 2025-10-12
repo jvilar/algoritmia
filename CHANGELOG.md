@@ -1,4 +1,6 @@
 # Changelog
+## [4.0.3] - 2025-10-12
+  - `algoritmia/schemes/bt_scheme.py`: Corregido bug en min_solution y max_solution.
 ## [4.0.2] - 2025-10-11
   - `algoritmia/_examples/divide_and_conquer/mergesort_scheme.py`: Cambios menores.
   - `algoritmia/_examples/backtracking`: Añade el tipo Result a los ejemplos.
