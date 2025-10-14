@@ -3,7 +3,7 @@ from typing import Self
 
 from algoritmia.schemes.dac_scheme import IDivideAndConquerProblem, div_solve
 
-type Solution = list[int]  # La lista ordenada
+type Solution = list[int]  # la lista ordenada
 
 class MergesortProblem(IDivideAndConquerProblem[Solution]):
     def __init__(self, v: list[int]):
@@ -22,7 +22,7 @@ class MergesortProblem(IDivideAndConquerProblem[Solution]):
 
     def combine(self, sols: Iterable[Solution]) -> Solution:
         left_sol, right_sol = sols
-        c = [0] * (len(left_sol) + len(right_sol))  # Vector auxiliar
+        c = [0] * (len(left_sol) + len(right_sol))  # vector auxiliar
         i, j, k = 0, 0, 0
         while i < len(left_sol) and j < len(right_sol):
             if left_sol[i] < right_sol[j]:

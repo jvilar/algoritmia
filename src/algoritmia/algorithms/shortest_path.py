@@ -76,7 +76,7 @@ def path_recover[T](edges: Iterable[Edge[T]], v: T) -> Path[T]:
 type Solution[T] = list[T]
 
 type Score = int | float
-type ScoredSolution[T] = tuple[Score, Solution[T]]
+type Result[T] = tuple[Score, Solution[T]] | None  # Si no hay solución, None
 
 type SParams[T] = T  # Para sp_acyclic_digraph()
 type SParams2[T] = tuple[T, int]  # Para sp_digraph()/bellman_ford()
@@ -87,7 +87,7 @@ type SParams2[T] = tuple[T, int]  # Para sp_digraph()/bellman_ford()
 def shortest_path_acyclic_digraph[T](g: Digraph[T],
                                      d: WeightingFunction[T],
                                      v_initial: T,
-                                     v_final: T) -> ScoredSolution[T]:
+                                     v_final: T) -> Result[T]:
     def S(v: T) -> Score:
         if v == v_initial:
             return 0
@@ -98,13 +98,13 @@ def shortest_path_acyclic_digraph[T](g: Digraph[T],
                 previous: SParams = u
                 # La decision, u, coincide con el previous
                 res.append((c_score, previous))
-            mem[v] = min(res, default=infinity)
+            mem[v] = min(res, default=(infinity, None))
         return mem[v][0]
 
     mem: dict[SParams, tuple[Score, SParams]] = {}
     score = S(v_final)
     if score == infinity:
-        return score, []  # El vértice destino es inalcanzable desde el origen
+        return None  # El vértice destino es inalcanzable desde el origen
     v0 = v_final
     sol: list[T] = [v0]
     while v0 != v_initial:
@@ -120,7 +120,7 @@ def shortest_path_acyclic_digraph[T](g: Digraph[T],
 def shortest_path_digraph[T](g: Digraph[T],
                              d: WeightingFunction[T],
                              v_initial: T,
-                             v_final: T) -> ScoredSolution[T]:
+                             v_final: T) -> Result[T]:
     def S(v: T, n: int) -> Score:
         if v == v_initial:
             return 0
@@ -133,13 +133,13 @@ def shortest_path_digraph[T](g: Digraph[T],
                 previous: SParams2 = u, n - 1
                 # La decision, u, se puede extraer del previous
                 res.append((c_score, previous))
-            mem[v, n] = min(res, default=infinity)
+            mem[v, n] = min(res, default=(infinity, None))
         return mem[v, n][0]
 
     mem: dict[SParams2, tuple[Score, SParams2]] = {}
     score: Score = S(v_final, len(g.V) - 1)
     if score == infinity:
-        return score, []  # El vértice destino es inalcanzable desde el origen
+        return None  # El vértice destino es inalcanzable desde el origen
     v0 = v_final
     n0 = len(g.V) - 1
     sol: list[T] = [v0]
@@ -153,60 +153,59 @@ def shortest_path_digraph[T](g: Digraph[T],
 bellman_ford = shortest_path_digraph  # Creamos un alias para la función
 
 
-def example_shortest_path_unweighted_graph():
-    # Output: [(0, 0), (0, 1), (1, 1), (1, 2), (0, 2), (0, 3), (1, 3)]
-    from algoritmia.datastructures.graphs import UndirectedGraph
-
-    type Vertex = tuple[int, int]
-
-    edges = [((0, 0), (0, 1)), ((0, 2), (0, 3)), ((1, 0), (1, 1)), ((1, 1), (1, 2)),
-             ((2, 0), (2, 1)), ((2, 1), (2, 2)), ((2, 2), (2, 3)), ((0, 1), (1, 1)),
-             ((0, 2), (1, 2)), ((0, 3), (1, 3)), ((1, 1), (2, 1)), ((1, 2), (2, 2))]
-    g = UndirectedGraph[Vertex](E=edges)
-    v_initial0 = (0, 0)
-    v_final0 = (1, 3)
-    print('shortest_path_unweighted_graph:', shortest_path_unweighted_graph(g, v_initial0, v_final0))
-
-
-def example_shortest_path_positive_weighted_graph():
-    from algoritmia.data.iberia import iberia, km
-
-    print('shortest_path_positive_weighted_graph:',
-          shortest_path_positive_weighted_graph(iberia, km, 'Madrid', 'Bilbao'))
-
-
-def example_shortest_path_metric_graph():
-    from algoritmia.data.iberia import iberia, km, coords2d
-
-    def eu_dist0(city_a: str, city_b: str) -> float:
-        pos2d_a, pos2d_b = coords2d[city_a], coords2d[city_b]
-        dx, dy = pos2d_a[0] - pos2d_b[0], pos2d_a[1] - pos2d_b[1]
-        return (dx * dx + dy * dy) ** 0.5
-
-    print('shortest_path_metric_graph:', shortest_path_metric_graph(iberia, km, eu_dist0, 'Madrid', 'Bilbao'))
-
-
-def example_shortest_path_acyclic_digraph():
-    data = {(0, 1): 1, (0, 3): 50, (1, 2): 10, (2, 3): 3, (3, 4): 4}
-    g = Digraph(E=data.keys())
-    wf = WeightingFunction(data)
-    print('shortest_path_acyclic_digraph:', shortest_path_acyclic_digraph(g, wf, 0, 3))
-
-
-def example_shortest_path_digraph():
-    data = {(0, 1): 1, (0, 3): 50, (1, 2): 10, (2, 0): 2,
-            (2, 3): -3, (3, 1): -2, (3, 2): 100, (3, 4): 4}
-    g = Digraph(E=data.keys())
-    wf = WeightingFunction(data)
-    print('shortest_path_digraph:', shortest_path_digraph(g, wf, 3, 2))
-
-
 # ----------------------------------------------------------------
 # Programa principal
 # ----------------------------------------------------------------
 
 
 if __name__ == '__main__':
+    def example_shortest_path_unweighted_graph():
+        # Output: [(0, 0), (0, 1), (1, 1), (1, 2), (0, 2), (0, 3), (1, 3)]
+        from algoritmia.datastructures.graphs import UndirectedGraph
+
+        type Vertex = tuple[int, int]
+
+        edges = [((0, 0), (0, 1)), ((0, 2), (0, 3)), ((1, 0), (1, 1)), ((1, 1), (1, 2)),
+                 ((2, 0), (2, 1)), ((2, 1), (2, 2)), ((2, 2), (2, 3)), ((0, 1), (1, 1)),
+                 ((0, 2), (1, 2)), ((0, 3), (1, 3)), ((1, 1), (2, 1)), ((1, 2), (2, 2))]
+        g = UndirectedGraph[Vertex](E=edges)
+        v_initial0 = (0, 0)
+        v_final0 = (1, 3)
+        print('shortest_path_unweighted_graph:', shortest_path_unweighted_graph(g, v_initial0, v_final0))
+
+
+    def example_shortest_path_positive_weighted_graph():
+        from algoritmia.data.iberia import iberia, km
+
+        print('shortest_path_positive_weighted_graph:',
+              shortest_path_positive_weighted_graph(iberia, km, 'Madrid', 'Bilbao'))
+
+
+    def example_shortest_path_metric_graph():
+        from algoritmia.data.iberia import iberia, km, coords2d
+
+        def eu_dist0(city_a: str, city_b: str) -> float:
+            pos2d_a, pos2d_b = coords2d[city_a], coords2d[city_b]
+            dx, dy = pos2d_a[0] - pos2d_b[0], pos2d_a[1] - pos2d_b[1]
+            return (dx * dx + dy * dy) ** 0.5
+
+        print('shortest_path_metric_graph:', shortest_path_metric_graph(iberia, km, eu_dist0, 'Madrid', 'Bilbao'))
+
+
+    def example_shortest_path_acyclic_digraph():
+        data = {(0, 1): 1, (0, 3): 50, (1, 2): 10, (2, 3): 3, (3, 4): 4}
+        g = Digraph(E=data.keys())
+        wf = WeightingFunction(data)
+        print('shortest_path_acyclic_digraph:', shortest_path_acyclic_digraph(g, wf, 0, 3))
+
+
+    def example_shortest_path_digraph():
+        data = {(0, 1): 1, (0, 3): 50, (1, 2): 10, (2, 0): 2,
+                (2, 3): -3, (3, 1): -2, (3, 2): 100, (3, 4): 4}
+        g = Digraph(E=data.keys())
+        wf = WeightingFunction(data)
+        print('shortest_path_digraph:', shortest_path_digraph(g, wf, 3, 2))
+
     example_shortest_path_unweighted_graph()
     example_shortest_path_positive_weighted_graph()
     example_shortest_path_metric_graph()

@@ -8,22 +8,22 @@ from algoritmia.schemes.bt_scheme import State
 
 # Tipos  --------------------------------------------------------------------------
 
-Decision = int  # 0 o 1 (coger o no un objeto)
-Solution = tuple[Decision, ...]
+type Decision = int  # 0 o 1 (coger o no un objeto)
+type Solution = tuple[Decision, ...]
 # Podriamos sobrescribir el método 'solution()' en KnapsackBabDS para que devolviera también el peso.
 # En ese caso el tipo de 'Solution' sería:
-# Solution = tuple[int, tuple[Decision, ...]]  # (weight, decisions)
+# type Solution = tuple[int, tuple[Decision, ...]]  # (weight, decisions)
 
-# 'bab_max_solve' devuelve Optional[ScoredSolution]
-Score = int  # Valor de la mochila (suma del valor de los objetos que contiene)
-ScoredSolution = tuple[Score, Solution]
+# 'bab_max_solve' devuelve Result
+type Score = int  # Valor de la mochila (suma del valor de los objetos que contiene)
+type Result = tuple[Score, Solution]  # Siempre hay solución -> No necesitamos None
 
 
 # Versión naif (cotas poco informadas) --------------------------------------------------------------------------
 
 def knapsack_bab_solve_naif(weights: list[int],
                             values: list[int],
-                            capacity: int) -> ScoredSolution:
+                            capacity: int) -> Result:
     @dataclass
     class Extra:
         weight: int = 0
@@ -59,12 +59,11 @@ def knapsack_bab_solve_naif(weights: list[int],
 
 
 # Versión con cotas informadas --------------------------------------------------------------------------
-c = 0
 
 
 def knapsack_bab_solve(weights: list[int],
                        values: list[int],
-                       capacity: int) -> ScoredSolution:
+                       capacity: int) -> Result:
     @dataclass
     class Extra:
         weight: int = 0

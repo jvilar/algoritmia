@@ -1,24 +1,19 @@
 from collections.abc import Iterator
 from dataclasses import dataclass
 from random import random, seed
-from typing import Optional, Self
+from typing import Self
 
 from algoritmia.schemes.bt_scheme import DecisionSequence, bt_solutions, bt_vc_solutions, min_solution
 
 # Tipos  --------------------------------------------------------------------------
 
 type Decision = int     # El número elegido
-type Score = int        # Cuántos números hemos elegido
 
-# Queremos que una solución sea la secuencia de decisiones (números) en forma de tupla:
+# Una solución es una secuencia de decisiones (números) en forma de tupla:
 type Solution = tuple[Decision, ...]
 
-# - 'bt_solutions' y 'bt_vc_solutions' devuelven un Iterator con las DecisionSequence que
-#   llegan a una solución.
-# - Pero un objeto DecisionSequence no es una tupla de decisiones: debemos utilizar el método
-#   'decisions()' de la clase DecisionSequence para obtener la tupla.
-
 # --------------------------------------------------------------------------------
+
 
 def subsetsum_solutions(e: tuple[int, ...], s: int) -> Iterator[Solution]:
     @dataclass
@@ -42,8 +37,8 @@ def subsetsum_solutions(e: tuple[int, ...], s: int) -> Iterator[Solution]:
 
 # --------------------------------------------------------------------------------
 
-type ScoredSolution = tuple[int, Solution]
-type Result = ScoredSolution | None
+type Score = int                           # Cuántos números hemos elegido
+type Result = tuple[int, Solution] | None  # Si no hay solución, None
 
 def subsetsum_best_solution(e: tuple[int, ...], s: int) -> Result:
     def f(solution: Solution) -> int:

@@ -1,4 +1,9 @@
 # Changelog
+## [4.0.4] - 2025-10-14
+  - `algoritmia/schemes/bt_scheme.py`: Acortados nombres de parámetros de tipo. Quitado tipo ScoredSolution. 
+  - `algoritmia/schemes/bab_scheme.py`: Acortados nombres de parámetros de tipo.
+  - `algoritmia/algorithms/shortest_path.py`: Cambiado ScoredSolution por Result.
+  - `algoritmia/_examples/`: Cambiado ScoredSolution por Result. Otros cambios menores.
 ## [4.0.3] - 2025-10-12
   - `algoritmia/schemes/bt_scheme.py`: Corregido bug en min_solution y max_solution.
 ## [4.0.2] - 2025-10-11

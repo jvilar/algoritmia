@@ -1,7 +1,6 @@
-from typing import Optional
+# Búsqueda binaria en un vector ordenado
 
-
-def binarysearch_tail_rec(v: list[int], elem: int) -> Optional[int]:
+def binarysearch_tail_rec(v: list[int], elem: int) -> int | None:
     def rec(start: int, end: int):
         if end - start == 0:
             return None
@@ -16,7 +15,7 @@ def binarysearch_tail_rec(v: list[int], elem: int) -> Optional[int]:
     return rec(0, len(v))
 
 
-def binarysearch_iter(v: list[int], elem: int) -> Optional[int]:
+def binarysearch_iter(v: list[int], elem: int) -> int | None:
     start, end = 0, len(v)
     while end - start > 0:
         mid = (start + end) // 2
@@ -26,6 +25,7 @@ def binarysearch_iter(v: list[int], elem: int) -> Optional[int]:
             start = mid + 1
         else:  # elem == v[mid]:
             return mid
+    return None
 
 
 if __name__ == "__main__":

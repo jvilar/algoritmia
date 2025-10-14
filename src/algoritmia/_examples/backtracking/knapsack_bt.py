@@ -8,17 +8,12 @@ from algoritmia.schemes.bt_scheme import DecisionSequence, bt_solutions, bt_vc_s
 # Tipos  --------------------------------------------------------------------------
 
 type Decision = int                     # 1 o 0, (coger o no, el objeto)
-type Score = int                        # El valor de la mochila
 
-# Queremos que una solución sea la secuencia de decisiones (1/0) en forma de tupla:
+# Una solución es una secuencia de decisiones (0 o 1) en forma de tupla:
 type Solution = tuple[Decision, ...]
 
-# - 'bt_solutions' y 'bt_vc_solutions' devuelven un Iterator con las DecisionSequence que
-#   llegan a una solución.
-# - Pero un objeto DecisionSequence no es una tupla de decisiones: debemos utilizar el método
-#   'decisions()' de la clase DecisionSequence para obtener la tupla.
-
 # Esquema básico  --------------------------------------------------------------------------
+
 
 def knapsack_solutions(weights: list[int],
                        values: list[int],
@@ -43,10 +38,10 @@ def knapsack_solutions(weights: list[int],
     for solution_ds in bt_solutions(initial_ds):
         yield solution_ds.decisions()  # Extraemos las decisiones del objeto solution_ds y las devolvemos
 
+# Esquema básico: Mejor solución -----------------------------------------------------------
 
-type ScoredSolution = tuple[int, Solution]
-type Result = ScoredSolution | None
-
+type Score = int                      # El valor de la mochila
+type Result = tuple[Score, Solution]  # Siempre hay solución -> No necesitamos None
 
 def knapsack_best_solution(weights: list[int],
                            values: list[int],
@@ -56,7 +51,6 @@ def knapsack_best_solution(weights: list[int],
 
     all_solutions: Iterator[Solution] = knapsack_solutions(weights, values, capacity)
     return max_solution(all_solutions, f)
-
 
 # Esquema con control de visitados  --------------------------------------------------------------------------
 

@@ -12,15 +12,14 @@ from algoritmia.utils import infinity
 # Decision = T
 type Solution[T] = tuple[T, ...]
 
-# 'bab_min_solve' devuelve Optional[ScoredSolution]
+# 'bab_min_solve' devuelve Result[T]
 type Score = float
-type ScoredSolution[T] = tuple[Score, Solution[T]]
-
+type Result[T] = tuple[Score, Solution[T]] | None  # Si no hay solución, None
 
 # --------------------------------------------------------------------------------
 
 def hamiltoniancycle_bab_solve[T](g: UndirectedGraph[T],
-                                  wf: WeightingFunction[T]) -> ScoredSolution[T] | None:
+                                  wf: WeightingFunction[T]) -> Result[T]:
     @dataclass
     class Extra:
         weight: int = 0

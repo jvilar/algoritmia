@@ -8,17 +8,16 @@ from algoritmia.utils import infinity
 
 # Tipos  --------------------------------------------------------------------------
 
-Decision = int
-Solution = tuple[Decision, ...]
+type Decision = int
+type Solution = tuple[Decision, ...]
 
-# 'bab_min_solve' devuelve Optional[ScoredSolution]
-Score = int
-ScoredSolution = tuple[Score, Solution]
-
+# 'bab_min_solve' devuelve Result
+type Score = int
+type Result = tuple[Score, Solution] | None  # Si no hay solución, None
 
 # --------------------------------------------------------------------------------
 
-def sumset_bab_solve(e: tuple[int, ...], s: int) -> ScoredSolution | None:
+def sumset_bab_solve(e: tuple[int, ...], s: int) -> Result:
     @dataclass
     class Extra:
         acc_sum: int = 0  # accumulated sum

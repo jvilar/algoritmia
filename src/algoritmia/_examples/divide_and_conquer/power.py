@@ -1,3 +1,5 @@
+# Potencia entera de un número
+
 def power_naif(a: float, n: int) -> float:
     if n == 0:
         return 1

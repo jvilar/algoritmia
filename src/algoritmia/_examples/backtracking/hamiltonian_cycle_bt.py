@@ -9,15 +9,11 @@ from algoritmia.schemes.bt_scheme import DecisionSequence, bt_solutions, min_sol
 # En este problema, una decisión es un vértice, por lo tanto, su tipo es TVertex (el genérico del grafo)
 # TDecision = TVertex
 
-# Queremos que una solución sea la secuencia de decisiones (vértices) en forma de tupla:
+# Una solución es una secuencia de decisiones (vértices) en forma de tupla:
 type Solution[TDecision] = tuple[TDecision, ...]
 
-# - 'bt_solutions' y 'bt_vc_solutions' devuelven un Iterator con las DecisionSequence que
-#   llegan a una solución.
-# - Pero un objeto DecisionSequence no es una tupla de decisiones: debemos utilizar el método
-#   'decisions()' de la clase DecisionSequence para obtener la tupla.
-
 # --------------------------------------------------------------------------------
+
 
 def hamiltoniancycle_solutions[TVertex](g: IGraph[TVertex]) -> Iterator[Solution[TVertex]]:
     class HamiltonianCycleDS(DecisionSequence[TVertex, None]):  # Como no hay Extra -> ponemos None
@@ -40,8 +36,7 @@ def hamiltoniancycle_solutions[TVertex](g: IGraph[TVertex]) -> Iterator[Solution
 
 
 type Score = int | float    # La longitud (suma de pesos) del ciclo
-type ScoredSolution[TDecision] = tuple[Score, Solution[TDecision]]   # (score, solution)
-type Result[TDecision] = ScoredSolution[TDecision] | None            # None si no hay solución
+type Result[TDecision] = tuple[Score, Solution[TDecision]] | None   # None si no hay solución
 
 
 def hamiltoniancycle_best_solution[TVertex](g: IGraph[TVertex],

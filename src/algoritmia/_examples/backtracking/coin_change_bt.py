@@ -7,17 +7,12 @@ from algoritmia.schemes.bt_scheme import DecisionSequence, bt_solutions, bt_vc_s
 # Tipos  --------------------------------------------------------------------------
 
 type Decision = int     # Número de monedas del tipo actual
-type Score = int        # Total de monedas utilizado
 
-# Queremos que una solución sea la secuencia de decisiones (nº de monedas) en forma de tupla:
+# Una solución es una secuencia de decisiones (nº de monedas) en forma de tupla:
 type Solution = tuple[Decision, ...]
 
-# - 'bt_solutions' y 'bt_vc_solutions' devuelven un Iterator con las DecisionSequence que
-#   llegan a una solución.
-# - Pero un objeto DecisionSequence no es una tupla de decisiones: debemos utilizar el método
-#   'decisions()' de la clase DecisionSequence para obtener la tupla.
-
 # --------------------------------------------------------------------------------
+
 
 def coin_change_solutions_naif(v: tuple[int, ...], Q: int) -> Iterator[Solution]:
     class CoinChangeDS(DecisionSequence[Decision, None]):
@@ -61,14 +56,19 @@ def coin_change_solutions(v: tuple[int, ...], Q: int) -> Iterator[Solution]:
 
     initial_ds = CoinChangeDS(Extra(Q))
     for solution_ds in bt_solutions(initial_ds):
-        yield solution_ds.decisions()
+        yield solution_ds.decisions()  # Devolvemos las decisiones de la DecisionSequence
 
 
 # --------------------------------------------------------------------------------
 
 
-type ScoredSolution = tuple[Score, Solution]   # (score, decisions)
-type Result = ScoredSolution | None            # None si no hay solución
+type Score = int                             # Total de monedas utilizado
+type Result = tuple[Score, Solution] | None  # Si no hay solución, None
+
+# Un objeto de tipo Result puede tomar los valores:
+#   - (score, decisions): si hay solución, donde 'decisions' es la tupla de decisiones
+#     de la solución y 'score', su puntuación.
+#   - None: si no hay solución.
 
 def coin_change_best_solution(v: tuple[int, ...], Q: int) -> Result:
     def f(solution: Solution) -> int:

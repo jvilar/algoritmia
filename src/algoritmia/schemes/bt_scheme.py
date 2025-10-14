@@ -1,5 +1,6 @@
 """
-Version:  5.4 (12-oct-2025) - Corregido bug en min_solution y max_solution
+Version:  5.6 (14-oct-2025) - Acortados nombres parámetros tipo. Quitado tipo ScoredSolution.
+          5.5 (12-oct-2025) - Corregido bug en min_solution y max_solution
           5.4 (11-oct-2025)
           5.3 (09-ene-2024)
           5.2 (01-dic-2023)
@@ -21,23 +22,21 @@ from typing import Any, final, Self
 # El tipo para guardar las secuencias de decisiones (self._decisions) como caminos en el árbol
 # de todas las posibles secuencias. Dos secuencias que compartan un prefijo comparten
 # la memoria correspondiente a ese prefijo.
-type DecisionPath[TDecision] = tuple[TDecision, DecisionPath[TDecision]] | tuple[()]
+type DecisionPath[D] = tuple[D, DecisionPath[D]] | tuple[()]
 
-# TIPOS VÁLIDOS PARA TDecision
-# Puede ser cualquier tipo inmutable
+# D (tipo de una decisión) y State deben ser tipos inmutables.
 
 # ACERCA DEL TIPO State
-# Puede ser cualquier tipo inmutable
-# La implementación por defecto devuelve self._decisions (tupla recursiva de TDecision)
+# La implementación por defecto devuelve self._decisions (la secuencia de decisiones)
 # Podemos sobreescribir state() en la clase hija para devolver otra cosa.
 type State = Any
 
 # La clase DecisionSequence -------------------------------------------------------
 
-class DecisionSequence[TDecision, TExtra](ABC, Sized):
+class DecisionSequence[D, E](ABC, Sized):
     def __init__(self,
-                 extra: TExtra | None = None,
-                 decisions: DecisionPath[TDecision] = (),
+                 extra: E | None = None,
+                 decisions: DecisionPath[D] = (),
                  length: int = 0):
         self.extra = extra
         self._decisions = decisions
@@ -63,17 +62,17 @@ class DecisionSequence[TDecision, TExtra](ABC, Sized):
     # -- Métodos finales que NO se pueden sobreescribir en las clases hijas ---
 
     @final
-    def add_decision(self, decision: TDecision, extra: TExtra = None) -> Self:
+    def add_decision(self, decision: D, extra: E = None) -> Self:
         return self.__class__(extra, (decision, self._decisions), self._len + 1)
 
     @final
-    def last_decision(self) -> TDecision:  # Es O(1)
+    def last_decision(self) -> D:  # Es O(1)
         if len(self._decisions) > 0:
             return self._decisions[0]
         raise RuntimeError(f'last_decision() used on an empty {self.__class__.__name__} object')
 
     @final
-    def decisions(self) -> tuple[TDecision, ...]:  # Es O(n)
+    def decisions(self) -> tuple[D, ...]:  # Es O(n)
         ds = deque()
         p = self._decisions
         while p != ():
@@ -88,8 +87,10 @@ class DecisionSequence[TDecision, TExtra](ABC, Sized):
 
 # Esquema para BT básico --------------------------------------------------------------------------
 
-def bt_solutions[TDecision, TExtra](ds: DecisionSequence[TDecision, TExtra])\
-        -> Iterator[DecisionSequence[TDecision, TExtra]]:
+# Un generador de soluciones sin control de visitados. Una solución es una DecisionSequence
+# para la que el método is_solution() devuelve True
+
+def bt_solutions[D, E](ds: DecisionSequence[D, E]) -> Iterator[DecisionSequence[D, E]]:
     if ds.is_solution():
         yield ds
     for new_ds in ds.successors():
@@ -98,9 +99,11 @@ def bt_solutions[TDecision, TExtra](ds: DecisionSequence[TDecision, TExtra])\
 
 #  Esquema para BT con control de visitados --------------------------------------------------------
 
-def bt_vc_solutions[TDecision, TExtra](initial_ds: DecisionSequence[TDecision, TExtra])\
-        -> Iterator[DecisionSequence[TDecision, TExtra]]:
-    def bt(ds: DecisionSequence[TDecision, TExtra]) -> Iterator[DecisionSequence[TDecision, TExtra]]:
+# Un generador de soluciones con control de visitados. Una solución es una DecisionSequence
+# para la que el método is_solution() devuelve True
+
+def bt_vc_solutions[D, E](initial_ds: DecisionSequence[D, E]) -> Iterator[DecisionSequence[D, E]]:
+    def bt(ds: DecisionSequence[D, E]) -> Iterator[DecisionSequence[D, E]]:
         if ds.is_solution():
             yield ds
         for new_ds in ds.successors():
@@ -113,15 +116,25 @@ def bt_vc_solutions[TDecision, TExtra](initial_ds: DecisionSequence[TDecision, T
     return bt(initial_ds)        # Devuelve un iterador de soluciones
 
 
-#  Mejor solución --------------------------------------------------------
+#  Encontrar la mejor solución --------------------------------------------------------
 
-type ScoredSolution[TScore, TSolution] = tuple[TScore, TSolution]          # (score, solution)
-type Result[TScore, TSolution] = ScoredSolution[TScore, TSolution] | None  # Si no hay solución: None
+# --- Tipo Result[Sol, S] ---
 
+type Result[Sco, Sol] = tuple[Sco, Sol] | None
 
-def min_solution[TScore, TSolution](solutions: Iterator[TSolution],
-                                    f: Callable[[TSolution], TScore]) -> Result[TScore, TSolution]:
-    best: Result[TScore, TSolution] = None
+# Parámetros de tipo:
+#   - Sol: el tipo de una solución
+#   - S: el tipo de la puntuación (int o float)
+
+# Un objeto de tipo Result[Sol, S] puede tomar los valores:
+#   - (score, solution), si hay solución.
+#   - None, si no hay solución.
+
+# --- Funciones min_solution y max_solution ---
+
+def min_solution[Sco, Sol](solutions: Iterator[Sol],
+                         f: Callable[[Sol], Sco]) -> Result[Sco, Sol]:
+    best: Result[Sco, Sol] = None
     for sol in solutions:
         score = f(sol)
         if best is None or score < best[0]:
@@ -129,9 +142,9 @@ def min_solution[TScore, TSolution](solutions: Iterator[TSolution],
     return best
 
 
-def max_solution[TScore, TSolution](solutions: Iterator[TSolution],
-                                    f: Callable[[TSolution], TScore]) -> Result[TScore, TSolution]:
-    best: Result[TScore, TSolution] = None
+def max_solution[Sco, Sol](solutions: Iterator[Sol],
+                         f: Callable[[Sol], S]) -> Result[Sco, Sol]:
+    best: Result[Sco, Sol] = None
     for sol in solutions:
         score = f(sol)
         if best is None or score > best[0]:

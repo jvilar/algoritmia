@@ -9,17 +9,17 @@ from algoritmia.utils import infinity
 
 # Tipos  --------------------------------------------------------------------------
 
-type Decision = int  # Número de monedas del tipo actual
+type Decision = int                     # Número de monedas del tipo actual
 type Solution = tuple[Decision, ...]
 
-# 'bab_min_solve' devuelve Optional[ScoredSolution]
-type Score = int  # Total de monedas utilizado
-type ScoredSolution = tuple[Score, Solution]
+# 'bab_min_solve' devuelve Result
+type Score = int                             # Total de monedas utilizado
+type Result = tuple[Score, Solution] | None  # Si no hay solución, None
 
 
 # --------------------------------------------------------------------------------
 
-def coin_change_bab_solve(v: tuple[int, ...], Q: int) -> ScoredSolution | None:
+def coin_change_bab_solve(v: tuple[int, ...], Q: int) -> Result:
     @dataclass
     class Extra:
         pending: int
