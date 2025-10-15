@@ -1,4 +1,6 @@
 # Changelog
+## [4.0.5] - 2025-10-15
+  - `algoritmia/_examples/greedy/frac_knapsack_greedy.py`: Renombrado de `knapsack_fraq_greedy.py`. Funciones renombradas.
 ## [4.0.4] - 2025-10-14
   - `algoritmia/schemes/bt_scheme.py`: Acortados nombres de parámetros de tipo. Quitado tipo ScoredSolution. 
   - `algoritmia/schemes/bab_scheme.py`: Acortados nombres de parámetros de tipo.
