@@ -143,7 +143,7 @@ def min_solution[Sco, Sol](solutions: Iterator[Sol],
 
 
 def max_solution[Sco, Sol](solutions: Iterator[Sol],
-                         f: Callable[[Sol], S]) -> Result[Sco, Sol]:
+                         f: Callable[[Sol], Sco]) -> Result[Sco, Sol]:
     best: Result[Sco, Sol] = None
     for sol in solutions:
         score = f(sol)

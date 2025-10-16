@@ -1,4 +1,6 @@
 # Changelog
+## [4.0.6] - 2025-10-16
+  - `algoritmia/schemes/bt_scheme.py`: corregido bug en tipo.
 ## [4.0.5] - 2025-10-15
   - `algoritmia/_examples/greedy/frac_knapsack_greedy.py`: Renombrado de `knapsack_fraq_greedy.py`. Funciones renombradas.
 ## [4.0.4] - 2025-10-14
